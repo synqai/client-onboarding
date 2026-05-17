@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SYNQ AI</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07070f;
+    --card: #0e0e1a;
+    --border: #1e1e35;
+    --accent: #7c3aed;
+    --accent2: #3b82f6;
+    --accent-light: #a78bfa;
+    --text: #f0f0f0;
+    --muted: #6b7280;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    color: var(--accent-light);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 8vw, 56px);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--accent-light), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group.full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  input:not([type="checkbox"]), select, textarea {
+    background: #0a0a18;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    width: 100%;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.6;
+  }
+
+  input:not([type="checkbox"])::placeholder, textarea::placeholder { color: #2a2a45; }
+
+  input:not([type="checkbox"]):focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+  }
+
+  select option { background: #0e0e1a; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+    grid-column: 1 / -1;
+  }
+
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    grid-column: 1 / -1;
+    margin-bottom: -8px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 18px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    margin-top: 28px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(124,58,237,0.4);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  .submit-btn.loading {
+    background: #1e1e35;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .success-card {
+    display: none;
+    text-align: center;
+    padding: 60px 40px;
+  }
+
+  .success-icon {
+    width: 72px;
+    height: 72px;
+    background: rgba(124,58,237,0.1);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 28px;
+  }
+
+  .success-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .success-card p {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 40px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .stat {
+    text-align: center;
+    padding: 20px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #0a0a18;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .checkbox-label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 15px !important;
+    color: var(--text) !important;
+    cursor: pointer !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 400 !important;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    padding: 0 !important;
+    accent-color: var(--accent) !important;
+    cursor: pointer !important;
+    border-radius: 4px !important;
+    border: 1px solid var(--accent) !important;
+    background: transparent !important;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 500px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    .form-card { padding: 28px 20px; }
+    .stats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="badge">Now accepting clients</div>
+
+  <h1>Automate your<br><span>customer replies</span><br>with SYNQ</h1>
+
+  <p class="subtitle">Your subscription is active! Fill in your business details below and we'll have your SYNQ bot ready within <strong style="color:#a78bfa">24 hours.</strong></p>
+
+  <div class="form-card">
+    <div id="formSection">
+      <form id="clientForm" action="https://formspree.io/f/xwvzenva" method="POST">
+
+        <div class="form-grid">
+          <div class="section-label">Personal Info</div>
+
+          <div class="form-group">
+            <label>First Name *</label>
+            <input type="text" name="first_name" placeholder="Emmanuel" required>
+          </div>
+
+          <div class="form-group">
+            <label>Last Name *</label>
+            <input type="text" name="last_name" placeholder="Agbeso" required>
+          </div>
+
+          <div class="form-group full">
+            <label>Email Address *</label>
+            <input type="email" name="email" placeholder="you@business.com" required>
+          </div>
+
+          <div class="form-group full">
+            <label>Phone Number *</label>
+            <input type="tel" name="phone" placeholder="+234 800 000 0000" required>
+          </div>
+
+          <div class="divider"></div>
+          <div class="section-label">Business Info</div>
+
+          <div class="form-group full">
+            <label>Business Name *</label>
+            <input type="text" name="business_name" placeholder="Chicken Republic Lagos" required>
+          </div>
+
+          <div class="form-group">
+            <label>Business Type *</label>
+            <select name="business_type" required>
+              <option value="" disabled selected>Select type</option>
+              <option>Restaurant / Food</option>
+              <option>Retail / Fashion</option>
+              <option>Beauty / Wellness</option>
+              <option>Real Estate</option>
+              <option>Logistics</option>
+              <option>Finance / Fintech</option>
+              <option>Education</option>
+              <option>Healthcare</option>
+              <option>E-commerce</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Opening Hours</label>
+            <input type="text" name="opening_hours" placeholder="Mon–Fri 9am–6pm">
+          </div>
+
+          <div class="form-group full">
+            <label>Business Description *</label>
+            <textarea name="business_description" placeholder="Tell us what your business does..." required></textarea>
+          </div>
+
+          <div class="form-group full">
+            <label>Website Link</label>
+            <input type="url" name="website" placeholder="https://yourbusiness.com">
+          </div>
+
+          <div class="divider"></div>
+          <div class="section-label">Social Media</div>
+
+          <div class="form-group">
+            <label>Instagram Handle</label>
+            <input type="text" name="instagram" placeholder="@yourbusiness">
+          </div>
+
+          <div class="form-group">
+            <label>TikTok Handle</label>
+            <input type="text" name="tiktok" placeholder="@yourbusiness">
+          </div>
+
+          <div class="form-group full">
+            <label>WhatsApp Business Number</label>
+            <input type="tel" name="whatsapp" placeholder="+234 800 000 0000">
+          </div>
+
+          <div class="form-group full">
+            <label>Platform * — Select all that apply</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" name="platform" value="Instagram DMs"> Instagram DMs</label>
+              <label class="checkbox-label"><input type="checkbox" name="platform" value="WhatsApp"> WhatsApp</label>
+              <label class="checkbox-label"><input type="checkbox" name="platform" value="Website Chat"> Website Chat</label>
+              <label class="checkbox-label"><input type="checkbox" name="platform" value="TikTok DMs"> TikTok DMs</label>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="section-label">SYNQ Bot Setup</div>
+
+          <div class="form-group full">
+            <label>What should your SYNQ bot do? (Optional)</label>
+            <textarea name="bot_instructions" placeholder="e.g. Answer FAQs, take orders, book appointments, share pricing..."></textarea>
+          </div>
+
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          Complete My Onboarding →
+        </button>
+
+      </form>
+    </div>
+
+    <div class="success-card" id="successSection">
+      <div class="success-icon">✓</div>
+      <h2>You're all set!</h2>
+      <p>We've received your details. Your SYNQ bot will be ready within <strong style="background:linear-gradient(135deg,#a78bfa,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">24 hours.</strong> Check your email for next steps.</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-number">24/7</div>
+      <div class="stat-label">Always online</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">&lt;2s</div>
+      <div class="stat-label">Reply time</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">∞</div>
+      <div class="stat-label">Messages handled</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('clientForm');
+  const btn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.textContent = 'Sending...';
+    btn.classList.add('loading');
+
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (res.ok) {
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('successSection').style.display = 'block';
+      } else {
+        btn.textContent = 'Something went wrong. Try again.';
+        btn.classList.remove('loading');
+      }
+    } catch {
+      btn.textContent = 'Something went wrong. Try again.';
+      btn.classList.remove('loading');
+    }
+  });
+</script>
+
+</body>
+</html>
